@@ -26,6 +26,7 @@ import {
   DrawerTrigger,
 } from "./ui/drawer";
 import Filters from "./filters";
+import { Download, DownloadIcon, SlidersHorizontal } from "lucide-react";
 
 export default function GeneratePage() {
   const [config, setConfig] = useState<WallpaperConfig>({
@@ -118,12 +119,16 @@ export default function GeneratePage() {
           height={IMAGE_HEIGHT}
           className="w-full h-full object-cover border border-gray-300 rounded-lg"
         />
+        <button className="absolute bottom-1.5 rounded-md left-1.5 backdrop-blur-md bg-background/30 p-2.5">
+          <Download className="h-5 w-5" />
+        </button>
       </div>
-      <div className="grid grid-cols-2 items-center gap-2 bg-background- h-16">
+
+      <div className="grid grid-cols-2 items-center gap-2  bg-background- h-16">
         <Drawer>
           <DrawerTrigger asChild>
             <Button size="lg" variant="secondary">
-              Filters
+              <SlidersHorizontal className="h-4 w-4 mt-px mr-2" /> Filters
             </Button>
           </DrawerTrigger>
           <DrawerContent className="pb-7">
