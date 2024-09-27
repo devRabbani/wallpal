@@ -3,13 +3,20 @@ import React from "react";
 
 export default function Nav() {
   return (
-    <nav className="py-3 bg-muted flex items-center justify-between">
-      <Link className="text-lg font-medium" href="/">
-        Wallpal
+    <nav className="py-1 flex items-center justify-between h-[3.25rem]">
+      <Link className="text-lg font-bold" href="/">
+        wallpal.
       </Link>
-      <div className="space-x-2 text-sm">
-        <Link href="/login">Home</Link>
-        <Link href="/login">Gallery</Link>
+      <div className="text-xs font-medium space-x-1">
+        <Link
+          className="px-3 bg-secondary rounded shadow-sm py-1.5"
+          href="/login"
+        >
+          Home
+        </Link>
+        <Link className="px-3 py-1.5" href="/login">
+          Gallery
+        </Link>
       </div>
     </nav>
   );
