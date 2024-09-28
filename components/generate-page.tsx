@@ -2,13 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "./ui/button";
-import {
-  DESKTOP_HEIGHT,
-  DESKTOP_WIDTH,
-  MOBILE_HEIGHT,
-  MOBILE_WIDTH,
-} from "@/lib/constants";
-import { FillModeType, PaletteType, WallpaperConfig } from "@/lib/types";
+import { WallpaperConfig } from "@/lib/types";
 import {
   generateBackground,
   getOptimizedContext,
@@ -18,24 +12,29 @@ import {
 } from "@/lib/utils";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
 } from "./ui/drawer";
 import Filters from "./filters";
-import { Download, DownloadIcon, SlidersHorizontal } from "lucide-react";
+import { Download, SlidersHorizontal } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
 
 export default function GeneratePage() {
   const [config, setConfig] = useState<WallpaperConfig>({
     text: "",
     palette: "pastel",
     fillMode: "auto",
-    customColor1: "#000000",
-    customColor2: "#ffffff",
+    customColor2: "#C82E50",
+    customColor1: "#E1DA42",
     textPosition: { x: 50, y: 50 },
     fontSize: 5,
     seed: Math.floor(Math.random() * 1000000),
@@ -104,8 +103,8 @@ export default function GeneratePage() {
   }, [updateTextOnly]);
 
   return (
-    <div className="mt-1">
-      <div className="w-full h-[calc(100svh-3.25rem-0.25rem-4rem)] relative">
+    <div className="mt-1 md:flex justify-center items-center md:py-3 md:mt-0  md:min-h-[calc(100svh-3.25rem)] gap-4 lg:gap-8">
+      <div className="w-full h-[calc(100svh-3.25rem-0.25rem-4rem)] sm:w-fit sm:aspect-[9/16] sm:mx-auto md:h-[60svh] lg:h-[73svh] lg:min-h-[540px] relative md:mx-0">
         <canvas
           ref={canvasRef}
           width={IMAGE_WIDTH}
@@ -114,30 +113,53 @@ export default function GeneratePage() {
         />
         <button
           onClick={downloadWallpaper}
-          className="absolute bottom-1.5 rounded-md left-1.5 backdrop-blur-md bg-background/30 p-2.5"
+          className="absolute bottom-1.5 rounded-md left-1.5 backdrop-blur-md bg-background/30 p-2.5 md:hidden"
         >
           <Download className="h-5 w-5" />
         </button>
       </div>
-
-      <div className="grid grid-cols-2 items-center gap-2  bg-background- h-16">
-        <Drawer>
-          <DrawerTrigger asChild>
-            <Button size="lg" variant="secondary">
-              <SlidersHorizontal className="h-4 w-4 mt-px mr-2" /> Filters
+      <div className="w-full h-fit max-w-xl">
+        <Card className="hidden md:block mb-3">
+          <CardHeader className="pb-2">
+            <CardTitle>Customize</CardTitle>
+            <CardDescription>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim
+              dolorum suscipit cumque mollitia voluptate at officiis, nihil
+              error doloremque possimus!
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Filters config={config} updateConfig={updateConfig} />
+          </CardContent>
+          <CardFooter className="space-x-2 mt-5">
+            <Button onClick={downloadWallpaper} size="lg" variant="secondary">
+              <Download className="h-4 w-4 mt-px mr-2" />
+              Download
             </Button>
-          </DrawerTrigger>
-          <DrawerContent className="pb-7">
-            <DrawerHeader className="text-left">
-              <DrawerTitle>Customize</DrawerTitle>
-              <Filters config={config} updateConfig={updateConfig} />
-            </DrawerHeader>
-          </DrawerContent>
-        </Drawer>
+            <Button size="lg" onClick={regenerateBackground}>
+              Regenerate
+            </Button>
+          </CardFooter>
+        </Card>
 
-        <Button size="lg" onClick={regenerateBackground}>
-          Regenerate
-        </Button>
+        <div className="grid grid-cols-2 items-center gap-2  bg-background h-16 md:hidden">
+          <Drawer>
+            <DrawerTrigger asChild>
+              <Button size="lg" variant="secondary">
+                <SlidersHorizontal className="h-4 w-4 mt-px mr-2" /> Filters
+              </Button>
+            </DrawerTrigger>
+            <DrawerContent className="pb-7">
+              <DrawerHeader className="text-left">
+                <DrawerTitle>Customize</DrawerTitle>
+                <Filters config={config} updateConfig={updateConfig} />
+              </DrawerHeader>
+            </DrawerContent>
+          </Drawer>
+          <Button size="lg" onClick={regenerateBackground}>
+            Regenerate
+          </Button>
+        </div>
       </div>
     </div>
   );

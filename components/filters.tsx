@@ -100,7 +100,7 @@ export default function Filters({
           </FormDiv>
         </TabsContent>
         <TabsContent value="background" className="space-y-4 mt-4">
-          <div className="flex space-x-4">
+          <div className="flex gap-4 flex-wrap lg:flex-nowrap">
             <FormDiv
               label="Color Palette"
               className="w-full"
