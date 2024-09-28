@@ -6,8 +6,6 @@ import { WallpaperConfig } from "@/lib/types";
 import {
   generateBackground,
   getOptimizedContext,
-  IMAGE_HEIGHT,
-  IMAGE_WIDTH,
   renderText,
 } from "@/lib/utils";
 import {
@@ -27,6 +25,9 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
+import { saveWallpaper } from "@/lib/actions";
+import { toast } from "sonner";
+import { IMAGE_HEIGHT, IMAGE_WIDTH } from "@/lib/constants";
 
 export default function GeneratePage() {
   const [config, setConfig] = useState<WallpaperConfig>({
@@ -41,6 +42,7 @@ export default function GeneratePage() {
     align: "center",
     patternIntensity: 0.1,
   });
+  const [isLoading, setIsLoading] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const backgroundImageRef = useRef<ImageData | null>(null);
 
@@ -52,13 +54,22 @@ export default function GeneratePage() {
     updateConfig({ seed: Math.floor(Math.random() * 1000000) });
   };
 
-  const downloadWallpaper = () => {
-    const canvas = canvasRef.current;
-    if (canvas) {
-      const link = document.createElement("a");
-      link.href = canvas.toDataURL("image/png");
-      link.download = "wallpaper.png";
-      link.click();
+  const downloadWallpaper = async () => {
+    setIsLoading(true);
+    try {
+      const canvas = canvasRef.current;
+      if (canvas) {
+        const link = document.createElement("a");
+        link.href = canvas.toDataURL("image/png");
+        link.download = `wallpaper_${Date.now()}.png`;
+        link.click();
+      }
+      const res = await saveWallpaper(config);
+      if (res?.error) return toast.error(res?.error);
+    } catch (error: any) {
+      console.error("Error downloading wallpaper:", error?.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -112,6 +123,7 @@ export default function GeneratePage() {
           className="w-full h-full object-cover border bg-secondary border-gray-300 rounded-lg"
         />
         <button
+          disabled={isLoading}
           onClick={downloadWallpaper}
           className="absolute bottom-1.5 rounded-md left-1.5 backdrop-blur-md bg-background/30 p-2.5 md:hidden"
         >
@@ -132,7 +144,12 @@ export default function GeneratePage() {
             <Filters config={config} updateConfig={updateConfig} />
           </CardContent>
           <CardFooter className="space-x-2 mt-5">
-            <Button onClick={downloadWallpaper} size="lg" variant="secondary">
+            <Button
+              disabled={isLoading}
+              onClick={downloadWallpaper}
+              size="lg"
+              variant="secondary"
+            >
               <Download className="h-4 w-4 mt-px mr-2" />
               Download
             </Button>

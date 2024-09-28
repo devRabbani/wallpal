@@ -1,7 +1,10 @@
-export const MOBILE_WIDTH = 1440;
-export const MOBILE_HEIGHT = 2560;
-export const DESKTOP_WIDTH = 3840;
-export const DESKTOP_HEIGHT = 2160;
+export const IMAGE_WIDTH = 1440;
+export const IMAGE_HEIGHT = 2560;
+export const HALF_IMAGE_WIDTH = IMAGE_WIDTH / 2;
+export const HALF_IMAGE_HEIGHT = IMAGE_HEIGHT / 2;
+export const IMAGE_PADDING = 100;
+export const PREVIEW_WIDTH = 360;
+export const PREVIEW_HEIGHT = 640;
 
 export const colorPalettes = {
   cool: [

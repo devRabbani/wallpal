@@ -1,18 +1,28 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { colorPalettes } from "./constants";
+import {
+  colorPalettes,
+  HALF_IMAGE_HEIGHT,
+  HALF_IMAGE_WIDTH,
+  IMAGE_HEIGHT,
+  IMAGE_PADDING,
+  IMAGE_WIDTH,
+  PREVIEW_HEIGHT,
+  PREVIEW_WIDTH,
+} from "./constants";
 import { AlignType, FillModeType, PaletteType, WallpaperConfig } from "./types";
-
-export const IMAGE_WIDTH = 1440;
-export const IMAGE_HEIGHT = 2560;
-export const HALF_IMAGE_WIDTH = IMAGE_WIDTH / 2;
-export const HALF_IMAGE_HEIGHT = IMAGE_HEIGHT / 2;
-export const IMAGE_PADDING = 100;
-export const PREVIEW_WIDTH = 360;
-export const PREVIEW_HEIGHT = 640;
+import crypto from "crypto";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
+}
+
+export function generateWallpaperHash(config: WallpaperConfig): string {
+  const text = config.text.trim();
+  const hashInput = !text
+    ? `${config.seed}-${text}`
+    : `${config.seed}-${text}-${config.textPosition.x}-${config.textPosition.y}-${config.fontSize}-${config.align}`;
+  return crypto.createHash("md5").update(hashInput).digest("hex");
 }
 
 export function seededRandom(seed: number) {
@@ -39,7 +49,7 @@ export function getOptimizedContext(
   return canvas.getContext("2d", { willReadFrequently: true });
 }
 
-function selectColors(
+export function selectColors(
   palette: PaletteType,
   fillMode: FillModeType,
   customColor1: string,
@@ -133,7 +143,10 @@ function applyPattern(
   }
 }
 
-function calculateTextXPosition(align: AlignType, xPercentage: number): number {
+export function calculateTextXPosition(
+  align: AlignType,
+  xPercentage: number
+): number {
   const xPixels = (IMAGE_WIDTH * xPercentage) / 100;
 
   switch (align) {
@@ -226,7 +239,7 @@ function getAverageColor(ctx: CanvasRenderingContext2D) {
   return `rgb(${r},${g},${b})`;
 }
 
-function getContrastColor(color: string) {
+export function getContrastColor(color: string) {
   const rgb = color.match(/\d+/g);
   if (rgb) {
     const brightness =
@@ -239,7 +252,7 @@ function getContrastColor(color: string) {
   return "#000000";
 }
 
-function getPatternColor(backgroundColor: string) {
+export function getPatternColor(backgroundColor: string) {
   const rgb = backgroundColor.match(/\d+/g);
   if (rgb) {
     const brightness =

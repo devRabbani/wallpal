@@ -7,17 +7,44 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model User {
-  id    Int    @id @default(autoincrement())
-  email String @unique
-  name  String?
-  posts Post[]
+enum Palette {
+  cool
+  warm
+  pastel
+  vibrant
+  dark
+  grayscale
+  custom
 }
 
-model Post {
-  id     Int      @id @default(autoincrement())
-  title  String
-  content String?
-  userId Int
-  user   User @relation(fields: [userId], references: [id])
+enum FillMode {
+  auto
+  flat
+  gradient
+}
+
+enum Align {
+  left
+  center
+  right
+}
+
+model Wallpaper {
+  id               Int      @id @default(autoincrement())
+  hash             String   @unique
+  text             String   @db.VarChar(255)
+  palette          Palette  @default(pastel)
+  fillMode         FillMode @default(auto)
+  customColor1     String   @db.VarChar(7)
+  customColor2     String   @db.VarChar(7)
+  textPositionX    Int      @default(50)
+  textPositionY    Int      @default(50)
+  fontSize         Int      @default(5)
+  seed             Int
+  align            Align    @default(center)
+  patternIntensity Float    @default(0.1)
+  createdAt        DateTime @default(now())
+
+  @@index([createdAt])
+  @@map("wallpaper")
 }
