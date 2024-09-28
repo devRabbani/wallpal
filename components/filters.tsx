@@ -12,10 +12,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { Label } from "./ui/label";
 import { Slider } from "./ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import FormDiv from "./form-div";
+import CustomColorPicker from "./custom-color-picker";
 
 export default function Filters({
   config,
@@ -100,25 +100,44 @@ export default function Filters({
           </FormDiv>
         </TabsContent>
         <TabsContent value="background" className="space-y-4 mt-4">
-          <FormDiv label="Color Palette" labelId="colorpalette">
-            <Select
-              value={config.palette}
-              onValueChange={(value: PaletteType) =>
-                updateConfig({ palette: value })
-              }
+          <div className="flex space-x-4">
+            <FormDiv
+              label="Color Palette"
+              className="w-full"
+              labelId="colorpalette"
             >
-              <SelectTrigger id="colorpalette">
-                <SelectValue placeholder="Select color palette" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="custom">Custom</SelectItem>
-                <SelectItem value="pastel">Pastel</SelectItem>
-                <SelectItem value="vibrant">Vibrant</SelectItem>
-                <SelectItem value="dark">Dark</SelectItem>
-                <SelectItem value="light">Light</SelectItem>
-              </SelectContent>
-            </Select>
-          </FormDiv>
+              <Select
+                value={config.palette}
+                onValueChange={(value: PaletteType) =>
+                  updateConfig({ palette: value })
+                }
+              >
+                <SelectTrigger id="colorpalette">
+                  <SelectValue placeholder="Select color palette" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="custom">Custom</SelectItem>
+                  <SelectItem value="pastel">Pastel</SelectItem>
+                  <SelectItem value="vibrant">Vibrant</SelectItem>
+                  <SelectItem value="dark">Dark</SelectItem>
+                  <SelectItem value="light">Light</SelectItem>
+                </SelectContent>
+              </Select>
+            </FormDiv>
+            {config.palette === "custom" && (
+              <CustomColorPicker
+                customColor1={config.customColor1}
+                customColor2={config.customColor2}
+                setCustomColor1={(color) =>
+                  updateConfig({ customColor1: color })
+                }
+                setCustomColor2={(color) =>
+                  updateConfig({ customColor2: color })
+                }
+              />
+            )}
+          </div>
+
           <FormDiv label="Fill Mode" labelId="fillmode">
             <Select
               value={config.fillMode}
@@ -136,22 +155,6 @@ export default function Filters({
               </SelectContent>
             </Select>
           </FormDiv>
-
-          {config.palette === "custom" && (
-            <div className="grid grid-cols-2 gap-4">
-              <Input
-                type="color"
-                value={config.customColor1}
-                onChange={(e) => updateConfig({ customColor1: e.target.value })}
-              />
-              <Input
-                type="color"
-                value={config.customColor2}
-                onChange={(e) => updateConfig({ customColor2: e.target.value })}
-              />
-            </div>
-          )}
-
           <FormDiv label="Pattern Intensity" labelId="patternintensity">
             <Slider
               min={0}
