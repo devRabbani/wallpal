@@ -112,7 +112,7 @@ export default function GeneratePage() {
 
   return (
     <div className="mt-1">
-      <div className="w-full h-[calc(100vh-3.25rem-0.25rem-4rem)] relative">
+      <div className="w-full h-[calc(100svh-3.25rem-0.25rem-4rem)] relative">
         <canvas
           ref={canvasRef}
           width={IMAGE_WIDTH}
