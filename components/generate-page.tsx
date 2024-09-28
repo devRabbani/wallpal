@@ -52,23 +52,16 @@ export default function GeneratePage() {
     updateConfig({ seed: Math.floor(Math.random() * 1000000) });
   };
 
-  const saveWallpaper = async () => {
-    const response = await fetch("/api/save-wallpaper", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(config),
-    });
 
-    if (response.ok) {
-      alert("Wallpaper configuration saved successfully!");
-    } else {
-      alert("Failed to save wallpaper configuration");
-    }
-  };
-
-  const downloadWallpaper = () => {};
+  const downloadWallpaper = () => {
+    const canvas = canvasRef.current
+    if (canvas) {
+      const link = document.createElement('a')
+      link.href = canvas.toDataURL('image/png')
+      link.download = 'wallpaper.png'
+      link.click()
+    };
+  }
 
   const generateImage = useCallback(() => {
     const canvas = canvasRef.current;
@@ -117,9 +110,9 @@ export default function GeneratePage() {
           ref={canvasRef}
           width={IMAGE_WIDTH}
           height={IMAGE_HEIGHT}
-          className="w-full h-full object-cover border border-gray-300 rounded-lg"
+          className="w-full h-full object-cover border bg-secondary border-gray-300 rounded-lg"
         />
-        <button className="absolute bottom-1.5 rounded-md left-1.5 backdrop-blur-md bg-background/30 p-2.5">
+        <button onClick={downloadWallpaper} className="absolute bottom-1.5 rounded-md left-1.5 backdrop-blur-md bg-background/30 p-2.5">
           <Download className="h-5 w-5" />
         </button>
       </div>

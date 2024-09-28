@@ -25,7 +25,7 @@ export default function Filters({
   updateConfig: (updates: Partial<WallpaperConfig>) => void;
 }) {
   return (
-    <div className="space-y-4 mt-3 min-h-[347px]">
+    <div className="space-y-4 mt-3 min-h-[350px]">
       <Tabs defaultValue="text">
         <TabsList>
           <TabsTrigger className="w-28" value="text">

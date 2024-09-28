@@ -8,6 +8,9 @@ export const IMAGE_HEIGHT = 2560;
 export const HALF_IMAGE_WIDTH = IMAGE_WIDTH / 2;
 export const HALF_IMAGE_HEIGHT = IMAGE_HEIGHT / 2;
 export const IMAGE_PADDING = 100;
+export const PREVIEW_WIDTH = 360;
+export const PREVIEW_HEIGHT = 640;
+
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -40,13 +43,14 @@ function selectColors(
 
 function createGradient(
   ctx: CanvasRenderingContext2D,
-  selectedColors: string[]
+  selectedColors: string[],
+  random: () => number
 ) {
-  const gradientType = Math.random() < 0.5 ? "linear" : "radial";
+  const gradientType = random() < 0.5 ? "linear" : "radial";
   let gradient;
 
   if (gradientType === "linear") {
-    const angle = Math.random() * 360;
+    const angle = random() * 360;
     const startX =
       HALF_IMAGE_WIDTH + HALF_IMAGE_WIDTH * Math.cos((angle * Math.PI) / 180);
     const startY =
@@ -58,9 +62,9 @@ function createGradient(
     gradient = ctx.createLinearGradient(startX, startY, endX, endY);
   } else {
     const centerX =
-      HALF_IMAGE_WIDTH + ((Math.random() - 0.5) * IMAGE_WIDTH) / 2;
+      HALF_IMAGE_WIDTH + ((random() - 0.5) * IMAGE_WIDTH) / 2;
     const centerY =
-      HALF_IMAGE_HEIGHT + ((Math.random() - 0.5) * IMAGE_HEIGHT) / 2;
+      HALF_IMAGE_HEIGHT + ((random() - 0.5) * IMAGE_HEIGHT) / 2;
     gradient = ctx.createRadialGradient(
       centerX,
       centerY,
@@ -88,7 +92,7 @@ function applyBackground(
     fillMode === "gradient" || (fillMode === "auto" && random() < 0.7);
 
   if (isGradient) {
-    ctx.fillStyle = createGradient(ctx, selectedColors);
+    ctx.fillStyle = createGradient(ctx, selectedColors,random);
   } else {
     ctx.fillStyle = selectedColors[0];
   }
@@ -96,12 +100,12 @@ function applyBackground(
   ctx.fillRect(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
 }
 
-function applyPattern(ctx: CanvasRenderingContext2D, patternIntensity: number) {
+function applyPattern(ctx: CanvasRenderingContext2D, patternIntensity: number,random: () => number) {
   const backgroundColor = getAverageColor(ctx);
   const patternColor = getPatternColor(backgroundColor);
 
   const patternFn =
-    backgroundPatterns[Math.floor(Math.random() * backgroundPatterns.length)];
+    backgroundPatterns[Math.floor(random() * backgroundPatterns.length)];
   const pattern = patternFn(ctx, patternColor);
 
   if (pattern) {
@@ -336,7 +340,7 @@ export function generateBackground(
   applyBackground(ctx, config.fillMode, selectedColors, random);
 
   // Pattern
-  applyPattern(ctx, config.patternIntensity);
+  applyPattern(ctx, config.patternIntensity,random);
 }
 
 export function renderText(
@@ -352,4 +356,40 @@ export function renderText(
   setupTextRendering(ctx, config.align);
   drawText(ctx, config.text, x, y, calculatedFontSize);
   ctx.restore();
+}
+
+
+
+export function generateWallpaperPreview(config: WallpaperConfig): string {
+  const canvas = document.createElement('canvas');
+  canvas.width = PREVIEW_WIDTH;
+  canvas.height = PREVIEW_HEIGHT;
+  const ctx = canvas.getContext('2d');
+  
+  if (ctx) {
+    const scaleFactor = PREVIEW_WIDTH / IMAGE_WIDTH;
+    ctx.scale(scaleFactor, scaleFactor);
+    
+    generateBackground(ctx, config);
+    renderText(ctx, config);
+    
+    return canvas.toDataURL('image/jpeg', 0.7); // Use JPEG for smaller file size
+  }
+  
+  return '';
+}
+
+export function generateFullWallpaper(config: WallpaperConfig): string {
+  const canvas = document.createElement('canvas');
+  canvas.width = IMAGE_WIDTH;
+  canvas.height = IMAGE_HEIGHT;
+  const ctx = canvas.getContext('2d');
+  
+  if (ctx) {
+    generateBackground(ctx, config);
+    renderText(ctx, config);
+    return canvas.toDataURL('image/png');
+  }
+  
+  return '';
 }
