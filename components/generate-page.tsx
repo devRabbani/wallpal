@@ -11,6 +11,7 @@ import {
 import { FillModeType, PaletteType, WallpaperConfig } from "@/lib/types";
 import {
   generateBackground,
+  getOptimizedContext,
   IMAGE_HEIGHT,
   IMAGE_WIDTH,
   renderText,
@@ -52,21 +53,20 @@ export default function GeneratePage() {
     updateConfig({ seed: Math.floor(Math.random() * 1000000) });
   };
 
-
   const downloadWallpaper = () => {
-    const canvas = canvasRef.current
+    const canvas = canvasRef.current;
     if (canvas) {
-      const link = document.createElement('a')
-      link.href = canvas.toDataURL('image/png')
-      link.download = 'wallpaper.png'
-      link.click()
-    };
-  }
+      const link = document.createElement("a");
+      link.href = canvas.toDataURL("image/png");
+      link.download = "wallpaper.png";
+      link.click();
+    }
+  };
 
   const generateImage = useCallback(() => {
     const canvas = canvasRef.current;
     if (canvas) {
-      const ctx = canvas.getContext("2d");
+      const ctx = getOptimizedContext(canvas);
       if (ctx) {
         generateBackground(ctx, config);
         // Store the background image data
@@ -84,7 +84,7 @@ export default function GeneratePage() {
   const updateTextOnly = useCallback(() => {
     const canvas = canvasRef.current;
     if (canvas && backgroundImageRef.current) {
-      const ctx = canvas.getContext("2d");
+      const ctx = getOptimizedContext(canvas);
       if (ctx) {
         // Restore the background
         ctx.putImageData(backgroundImageRef.current, 0, 0);
@@ -112,7 +112,10 @@ export default function GeneratePage() {
           height={IMAGE_HEIGHT}
           className="w-full h-full object-cover border bg-secondary border-gray-300 rounded-lg"
         />
-        <button onClick={downloadWallpaper} className="absolute bottom-1.5 rounded-md left-1.5 backdrop-blur-md bg-background/30 p-2.5">
+        <button
+          onClick={downloadWallpaper}
+          className="absolute bottom-1.5 rounded-md left-1.5 backdrop-blur-md bg-background/30 p-2.5"
+        >
           <Download className="h-5 w-5" />
         </button>
       </div>

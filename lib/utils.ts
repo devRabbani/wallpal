@@ -11,7 +11,6 @@ export const IMAGE_PADDING = 100;
 export const PREVIEW_WIDTH = 360;
 export const PREVIEW_HEIGHT = 640;
 
-
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -22,6 +21,22 @@ export function seededRandom(seed: number) {
     state = (state * 1664525 + 1013904223) % 4294967296;
     return state / 4294967296;
   };
+}
+
+function createOptimizedCanvas(
+  width: number,
+  height: number
+): HTMLCanvasElement {
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  return canvas;
+}
+
+export function getOptimizedContext(
+  canvas: HTMLCanvasElement
+): CanvasRenderingContext2D | null {
+  return canvas.getContext("2d", { willReadFrequently: true });
 }
 
 function selectColors(
@@ -61,10 +76,8 @@ function createGradient(
       HALF_IMAGE_HEIGHT - HALF_IMAGE_HEIGHT * Math.sin((angle * Math.PI) / 180);
     gradient = ctx.createLinearGradient(startX, startY, endX, endY);
   } else {
-    const centerX =
-      HALF_IMAGE_WIDTH + ((random() - 0.5) * IMAGE_WIDTH) / 2;
-    const centerY =
-      HALF_IMAGE_HEIGHT + ((random() - 0.5) * IMAGE_HEIGHT) / 2;
+    const centerX = HALF_IMAGE_WIDTH + ((random() - 0.5) * IMAGE_WIDTH) / 2;
+    const centerY = HALF_IMAGE_HEIGHT + ((random() - 0.5) * IMAGE_HEIGHT) / 2;
     gradient = ctx.createRadialGradient(
       centerX,
       centerY,
@@ -92,7 +105,7 @@ function applyBackground(
     fillMode === "gradient" || (fillMode === "auto" && random() < 0.7);
 
   if (isGradient) {
-    ctx.fillStyle = createGradient(ctx, selectedColors,random);
+    ctx.fillStyle = createGradient(ctx, selectedColors, random);
   } else {
     ctx.fillStyle = selectedColors[0];
   }
@@ -100,7 +113,11 @@ function applyBackground(
   ctx.fillRect(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
 }
 
-function applyPattern(ctx: CanvasRenderingContext2D, patternIntensity: number,random: () => number) {
+function applyPattern(
+  ctx: CanvasRenderingContext2D,
+  patternIntensity: number,
+  random: () => number
+) {
   const backgroundColor = getAverageColor(ctx);
   const patternColor = getPatternColor(backgroundColor);
 
@@ -340,7 +357,7 @@ export function generateBackground(
   applyBackground(ctx, config.fillMode, selectedColors, random);
 
   // Pattern
-  applyPattern(ctx, config.patternIntensity,random);
+  applyPattern(ctx, config.patternIntensity, random);
 }
 
 export function renderText(
@@ -358,38 +375,32 @@ export function renderText(
   ctx.restore();
 }
 
-
-
 export function generateWallpaperPreview(config: WallpaperConfig): string {
-  const canvas = document.createElement('canvas');
-  canvas.width = PREVIEW_WIDTH;
-  canvas.height = PREVIEW_HEIGHT;
-  const ctx = canvas.getContext('2d');
-  
+  const canvas = createOptimizedCanvas(PREVIEW_WIDTH, PREVIEW_HEIGHT);
+  const ctx = getOptimizedContext(canvas);
+
   if (ctx) {
     const scaleFactor = PREVIEW_WIDTH / IMAGE_WIDTH;
     ctx.scale(scaleFactor, scaleFactor);
-    
+
     generateBackground(ctx, config);
     renderText(ctx, config);
-    
-    return canvas.toDataURL('image/jpeg'); // Use JPEG for smaller file size
+
+    return canvas.toDataURL("image/jpeg"); // Use JPEG for smaller file size
   }
-  
-  return '';
+
+  return "";
 }
 
 export function generateFullWallpaper(config: WallpaperConfig): string {
-  const canvas = document.createElement('canvas');
-  canvas.width = IMAGE_WIDTH;
-  canvas.height = IMAGE_HEIGHT;
-  const ctx = canvas.getContext('2d');
-  
+  const canvas = createOptimizedCanvas(PREVIEW_WIDTH, PREVIEW_HEIGHT);
+  const ctx = getOptimizedContext(canvas);
+
   if (ctx) {
     generateBackground(ctx, config);
     renderText(ctx, config);
-    return canvas.toDataURL('image/png');
+    return canvas.toDataURL("image/png");
   }
-  
-  return '';
+
+  return "";
 }

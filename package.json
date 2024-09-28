@@ -29,6 +29,7 @@
     "next-themes": "^0.3.0",
     "react": "^18",
     "react-dom": "^18",
+    "react-intersection-observer": "^9.13.1",
     "react-masonry-css": "^1.0.16",
     "sonner": "^1.5.0",
     "tailwind-merge": "^2.5.2",

@@ -10,6 +10,7 @@ const config: Config = {
   theme: {
     container: {
       padding: "1rem",
+      center: true,
     },
     extend: {
       colors: {
