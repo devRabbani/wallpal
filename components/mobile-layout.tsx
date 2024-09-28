@@ -41,10 +41,11 @@ const handleDownload = useCallback((wallpaper: MobileLayoutProps) => {
    
         <div className="bg-background h-fit z-50 relative backdrop-blur-lg py-1.5 px-2.5 flex items-center gap-2 justify-between">
           <p className="text-xs">{moment(wallpaper.createdAt).fromNow()}</p>
-          <Button className="" size={'sm'} variant={"outline"} onClick={() => handleDownload(wallpaper)}>Download</Button>
+          <Button className="" size={'sm'} variant={"outline"} onClick={() => handleDownload(wallpaper)}>Download HD</Button>
         </div>
-          </div>
+      </div>
     ))}
+     {/* <Button>Loading</Button> */}
 </div>
 
 

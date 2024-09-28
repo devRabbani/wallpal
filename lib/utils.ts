@@ -373,7 +373,7 @@ export function generateWallpaperPreview(config: WallpaperConfig): string {
     generateBackground(ctx, config);
     renderText(ctx, config);
     
-    return canvas.toDataURL('image/jpeg', 0.7); // Use JPEG for smaller file size
+    return canvas.toDataURL('image/jpeg'); // Use JPEG for smaller file size
   }
   
   return '';

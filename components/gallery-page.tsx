@@ -113,6 +113,7 @@ const breakpointColumnsObj = {
     <>
       
           <MobileLayout wallpapers={wallpapers }/>
+         
       {/* <Masonry
         breakpointCols={breakpointColumnsObj}
         className="flex w-auto"
