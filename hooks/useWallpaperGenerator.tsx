@@ -16,9 +16,9 @@ export default function useWallpaperGenerator(initialConfig: WallpaperConfig) {
     setConfig((prev) => ({ ...prev, ...updates }));
   }, []);
 
-  const regenerateBackground = useCallback(() => {
+  const regenerateBackground = () => {
     updateConfig({ seed: Math.floor(Math.random() * 1000000) });
-  }, [updateConfig]);
+  };
 
   const generateImage = useCallback(() => {
     const canvas = canvasRef.current;
@@ -35,7 +35,7 @@ export default function useWallpaperGenerator(initialConfig: WallpaperConfig) {
         renderText(ctx, config);
       }
     }
-  }, [config]);
+  }, [config.seed]);
 
   const updateTextOnly = useCallback(() => {
     const canvas = canvasRef.current;
@@ -46,7 +46,7 @@ export default function useWallpaperGenerator(initialConfig: WallpaperConfig) {
         renderText(ctx, config);
       }
     }
-  }, [config]);
+  }, [config.text, config.fontSize, config.textPosition, config.align]);
 
   useEffect(() => {
     generateImage();
