@@ -7,7 +7,7 @@ export default function GalleryLayout({
 }) {
   return (
     <div>
-      <h2 className="hidden sm:block mt-4 mb-5 text-2xl font-semibold">
+      <h2 className="hidden sm:block mt-4 mb-5 text-2xl font-light">
         Generated Wallpapers
       </h2>
       <div

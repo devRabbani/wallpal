@@ -7,6 +7,7 @@ import { useInView } from "react-intersection-observer";
 import { getWallpapers } from "@/lib/actions";
 import { toast } from "sonner";
 import { LoaderCircle } from "lucide-react";
+import LoadingPage from "@/app/gallery/loading";
 import GaleryImg from "./gallery-img";
 
 export default function Gallery({
@@ -56,7 +57,7 @@ export default function Gallery({
     setIsMounted(true);
   }, []);
 
-  if (!isMounted) return null;
+  if (!isMounted) return <LoadingPage />;
 
   return (
     <>
