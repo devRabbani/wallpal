@@ -2,7 +2,7 @@
 
 ![Wallpal Logo](/public/ogimage.png?height=200&width=200)
 
-Wallpal is a fast and intuitive wallpaper generator that lets you create stunning wallpapers in just 10 seconds. Whether you want a custom design or to explore existing Full HD wallpapers, Wallpal has you covered.
+Wallpal is a fast wallpaper generator built with Next.js 14 and Prisma on NeonDB. It features Server Actions, unstable_cache, and a modern UI from shadcn/ui. Fully type-safe with TypeScript, it supports infinite scroll, rate limiting, cursor-based pagination, and uses linear congruential generator algorithms for dynamic wallpaper creation
 
 🌐 **[Live Demo](https://wallpal.vercel.app)**
 

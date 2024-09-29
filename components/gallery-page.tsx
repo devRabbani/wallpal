@@ -27,8 +27,11 @@ export default function Gallery({
   );
   const [hasMore, setHasMore] = useState(initialHasMore);
   const [isLoading, setIsLoading] = useState(false);
+  const [isInitial, setIsInitial] = useState(true);
 
   const fetchMore = async () => {
+    if (!isLoading || !hasMore) return; // extra safety
+
     setIsLoading(true);
     try {
       const wallpaperRes = await getWallpapers(nextCursor);
@@ -45,11 +48,16 @@ export default function Gallery({
     }
   };
 
-  const { ref, inView } = useInView({ initialInView: false, threshold: 0.5 });
+  const { ref, inView } = useInView({ threshold: 0.5 });
 
   useEffect(() => {
-    if (inView && !isLoading) fetchMore();
-  }, [inView]);
+    if (isInitial) {
+      setIsInitial(false);
+      return;
+    }
+
+    if (inView && !isLoading && hasMore) fetchMore();
+  }, [inView, isInitial]);
 
   return (
     <>
