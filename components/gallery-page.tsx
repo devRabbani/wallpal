@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import type { WallpaperDB } from "@/lib/types";
 import { useInView } from "react-intersection-observer";
@@ -54,7 +54,9 @@ export default function Gallery({
   return (
     <>
       {wallpapers.map((wallpaper) => (
-        <GaleryImg key={wallpaper.id} wallpaper={wallpaper} />
+        <Suspense>
+          <GaleryImg key={wallpaper.id} wallpaper={wallpaper} />
+        </Suspense>
       ))}
       {hasMore ? (
         <Button

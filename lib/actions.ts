@@ -4,7 +4,8 @@ import { headers } from "next/headers";
 import prisma from "./db";
 import { WallpaperConfig, WallpapersResponse } from "./types";
 import { generateWallpaperHash } from "./utils";
-import { unstable_cache } from "next/cache";
+import { revalidateTag, unstable_cache } from "next/cache";
+import ratelimit from "./ratelimit";
 
 const getIp = () => {
   const forwardedFor = headers().get("x-forwarded-for");
@@ -19,10 +20,23 @@ const getIp = () => {
   return "0.0.0.0";
 };
 
+const checkRateLimit = async () => {
+  const identifier = getIp();
+
+  const { success } = await ratelimit.limit(identifier);
+
+  if (!success) {
+    return {
+      error: "Too many requests!, Try after some time",
+    };
+  }
+};
 // Saving Wallpaper in DB
 
 export const saveWallpaper = async (config: WallpaperConfig) => {
   try {
+    await checkRateLimit();
+
     const wallpaperHash = generateWallpaperHash(config);
     const { textPosition, ...otherConfig } = config;
     const newWallpaper = await prisma.wallpaper.create({
@@ -37,6 +51,7 @@ export const saveWallpaper = async (config: WallpaperConfig) => {
       return {
         error: "Something went wrong",
       };
+    revalidateTag("wallpapers");
     console.log("New Wallpaper Created", newWallpaper.id);
   } catch (error: any) {
     console.log(error?.message);

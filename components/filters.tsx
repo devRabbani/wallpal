@@ -26,7 +26,7 @@ const SelectField = ({
   onValueChange,
   options,
 }: SelectFieldProps) => (
-  <FormDiv label={label} labelId={id}>
+  <FormDiv label={label} labelId={id} className="flex-grow">
     <Select value={value} onValueChange={onValueChange}>
       <SelectTrigger id={id}>
         <SelectValue placeholder={`Select ${label.toLowerCase()}`} />
