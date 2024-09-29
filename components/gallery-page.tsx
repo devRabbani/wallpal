@@ -1,63 +1,79 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-
-import { WallpaperConfig } from "@/lib/types";
-import {
-  generateWallpaperPreview,
-  generateFullWallpaper,
-  cn,
-} from "@/lib/utils";
-import Image from "next/image";
-import moment from "moment";
+import type { WallpaperDB } from "@/lib/types";
 import { useInView } from "react-intersection-observer";
-import GaleryImg from "./gallery-img";
-
-const heightOptions = [350, 500];
+import { getWallpapers } from "@/lib/actions";
+import { toast } from "sonner";
+import { LoaderCircle } from "lucide-react";
+import dynamic from "next/dynamic";
+const GaleryImg = dynamic(() => import("./gallery-img"), { ssr: false });
 
 export default function Gallery({
   initialWallpapers,
+  initialNextCursor,
+  initialHasMore,
 }: {
-  initialWallpapers: any[];
+  initialWallpapers: WallpaperDB[];
+  initialNextCursor: number | null;
+  initialHasMore: boolean;
 }) {
-  const [wallpapers, setWallpapers] = useState<any[]>(initialWallpapers);
+  const [wallpapers, setWallpapers] =
+    useState<WallpaperDB[]>(initialWallpapers);
+  const [nextCursor, setNextCursor] = useState<number | null>(
+    initialNextCursor
+  );
+  const [hasMore, setHasMore] = useState(initialHasMore);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const fetchMore = () => {};
+  const fetchMore = async () => {
+    setIsLoading(true);
+    try {
+      const wallpaperRes = await getWallpapers(nextCursor);
+      console.log("wallpaperRes fetched", wallpaperRes);
+      if ("error" in wallpaperRes) return toast.error(wallpaperRes.error);
+
+      setWallpapers((prev) => [...prev, ...wallpaperRes.wallpapers]);
+      setNextCursor(wallpaperRes.nextCursor);
+      setHasMore(wallpaperRes.hasMore);
+    } catch (error: any) {
+      console.log("Fetch More", error?.message);
+      toast.error("Error fetching more wallpapers");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const { ref, inView } = useInView({ initialInView: false, threshold: 0.5 });
-  console.count("ssss");
 
   useEffect(() => {
-    if (inView) fetchMore();
+    if (inView && !isLoading) fetchMore();
   }, [inView]);
-  console.log("Inview", wallpapers);
 
   return (
-    <div>
-      <h2 className="hidden sm:block mt-4 mb-5 text-2xl font-semibold">
-        Generated Wallpapers
-      </h2>
-      <div
-        className={cn(
-          "grid gap-4 mt-2 rounded-lg",
-          "sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4",
-          "snap-y snap-mandatory overflow-y-scroll h-[calc(100svh-3.25rem-0.5rem)]",
-          "sm:snap-none sm:overflow-visible sm:h-auto"
-        )}
-      >
-        {wallpapers.map((wallpaper) => (
-          <GaleryImg key={wallpaper.id} wallpaper={wallpaper} />
-        ))}
+    <>
+      {wallpapers.map((wallpaper) => (
+        <GaleryImg key={wallpaper.id} wallpaper={wallpaper} />
+      ))}
+      {hasMore ? (
         <Button
-          // ref={ref}
-          className="mx-auto block my-2 col-span-full"
+          ref={ref}
+          className="mx-auto w-[5.5rem] block my-2 col-span-full"
           variant={"outline"}
           size={"sm"}
         >
-          Load More
+          {isLoading ? (
+            <LoaderCircle className="h-4 w-4 mx-auto animate-spin" />
+          ) : (
+            "Load More"
+          )}
         </Button>
-      </div>
-    </div>
+      ) : (
+        <p className="col-span-full mx-auto my-3 mb-5 text-muted-foreground ">
+          Nothing left to show now
+        </p>
+      )}
+    </>
   );
 }

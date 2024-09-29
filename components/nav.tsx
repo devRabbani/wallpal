@@ -10,8 +10,6 @@ import { Github } from "lucide-react";
 export default function Nav() {
   const pathname = usePathname();
 
-  const isHome = pathname === "/";
-
   return (
     <nav className="py-1 z-50 sticky top-0 bg-background flex items-center justify-between h-[3.25rem]">
       <Link
@@ -38,7 +36,8 @@ export default function Nav() {
           className={cn(
             "px-3 rounded text-muted-foreground py-1.5 transition",
             {
-              "bg-secondary shadow-sm border text-secondary-foreground": isHome,
+              "bg-secondary shadow-sm border text-secondary-foreground":
+                pathname === "/",
             }
           )}
           href="/"
@@ -50,7 +49,7 @@ export default function Nav() {
             "px-3 rounded text-muted-foreground py-1.5 transition",
             {
               "bg-secondary shadow-sm border text-secondary-foreground":
-                !isHome,
+                pathname === "/gallery",
             }
           )}
           href="/gallery"

@@ -62,3 +62,16 @@ export const colorPalettes = {
     "oklch(60% 0.2 330)", // Vibrant magenta
   ],
 };
+
+export const DEFAULT_CONFIG = {
+  text: "",
+  palette: "pastel",
+  fillMode: "auto",
+  customColor2: "#C82E50",
+  customColor1: "#E1DA42",
+  textPosition: { x: 50, y: 50 },
+  fontSize: 5,
+  seed: Math.floor(Math.random() * 1000000),
+  align: "center",
+  patternIntensity: 0.1,
+} as const;
