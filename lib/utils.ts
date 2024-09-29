@@ -406,7 +406,7 @@ export function generateWallpaperPreview(config: WallpaperConfig): string {
 }
 
 export function generateFullWallpaper(config: WallpaperConfig): string {
-  const canvas = createOptimizedCanvas(PREVIEW_WIDTH, PREVIEW_HEIGHT);
+  const canvas = createOptimizedCanvas(IMAGE_WIDTH, IMAGE_HEIGHT);
   const ctx = getOptimizedContext(canvas);
 
   if (ctx) {

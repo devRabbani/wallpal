@@ -15,7 +15,7 @@ export default function Nav() {
   return (
     <nav className="py-1 z-50 sticky top-0 bg-background flex items-center justify-between h-[3.25rem]">
       <Link
-        className="text-xl font-bold transition-colors hover:text-primary"
+        className="text-2xl font-bold transition-colors hover:text-primary"
         href="/"
       >
         wallpal.
