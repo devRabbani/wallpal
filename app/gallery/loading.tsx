@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-const GalleryImgSkeleton = () => {
+export const GalleryImgSkeleton = () => {
   return <Skeleton className="w-full h-full aspect-[9/16] rounded-lg" />;
 };
 

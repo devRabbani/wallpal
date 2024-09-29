@@ -8,6 +8,7 @@ import { getWallpapers } from "@/lib/actions";
 import { toast } from "sonner";
 import { LoaderCircle } from "lucide-react";
 import dynamic from "next/dynamic";
+import { GalleryImgSkeleton } from "@/app/gallery/loading";
 const GaleryImg = dynamic(() => import("./gallery-img"), { ssr: false });
 
 export default function Gallery({
@@ -53,8 +54,8 @@ export default function Gallery({
   return (
     <>
       {wallpapers.map((wallpaper) => (
-        <Suspense key={wallpaper.id}>
-          <GaleryImg wallpaper={wallpaper} />
+        <Suspense key={wallpaper.id} fallback={<GalleryImgSkeleton />}>
+          <GaleryImg key={wallpaper.id} wallpaper={wallpaper} />
         </Suspense>
       ))}
       {hasMore ? (

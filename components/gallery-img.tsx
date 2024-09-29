@@ -3,9 +3,9 @@ import moment from "moment";
 import Image from "next/image";
 import { Button } from "./ui/button";
 import { useCallback } from "react";
-import { WallpaperConfig } from "@/lib/types";
+import type { WallpaperConfig, WallpaperDB } from "@/lib/types";
 
-export default function GaleryImg({ wallpaper }: { wallpaper: any }) {
+export default function GaleryImg({ wallpaper }: { wallpaper: WallpaperDB }) {
   const handleDownload = useCallback((wallpaper: WallpaperConfig) => {
     const fullWallpaper = generateFullWallpaper(wallpaper);
     const link = document.createElement("a");
