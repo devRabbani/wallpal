@@ -31,7 +31,6 @@ export default function Gallery({
     setIsLoading(true);
     try {
       const wallpaperRes = await getWallpapers(nextCursor);
-      console.log("wallpaperRes fetched", wallpaperRes);
       if ("error" in wallpaperRes) return toast.error(wallpaperRes.error);
 
       setWallpapers((prev) => [...prev, ...wallpaperRes.wallpapers]);
@@ -54,8 +53,8 @@ export default function Gallery({
   return (
     <>
       {wallpapers.map((wallpaper) => (
-        <Suspense>
-          <GaleryImg key={wallpaper.id} wallpaper={wallpaper} />
+        <Suspense key={wallpaper.id}>
+          <GaleryImg wallpaper={wallpaper} />
         </Suspense>
       ))}
       {hasMore ? (

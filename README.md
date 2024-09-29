@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Wallpal - Transform Your Screen in Seconds!
 
-## Getting Started
+![Wallpal Logo](/public/ogimage.png?height=200&width=200)
 
-First, run the development server:
+Wallpal is a fast and intuitive wallpaper generator that lets you create stunning wallpapers in just 10 seconds. Whether you want a custom design or to explore existing Full HD wallpapers, Wallpal has you covered.
+
+🌐 **[Live Demo](https://wallpal.vercel.app)**
+
+## Features 🛠️
+
+1. **Rapid Creation** ⏱️: Design beautiful wallpapers in just 10 seconds.
+2. **Custom Palettes** 🎨: Choose from predefined color schemes or create your own unique palette.
+
+3. **Text Customization** ✍️: Change font sizes, alignment, and positions for perfect styling.
+
+4. **Gradient and Patterns** 🌈: Easily create gradients and add patterns for unique designs.
+
+5. **Explore & Download** 📥: Browse a library of Full HD wallpapers made by other users.
+
+6. **Real-time Preview** 👁️: See your design changes instantly.
+
+7. **User-Friendly Interface** 📱: Enjoy a seamless experience on any device.
+
+8. **Free to Use** 💸: Access all features without any cost.
+
+## Installation 💻
+
+To get started with Wallpal, follow these steps:
+
+1. Clone the repository:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/devrabbani/wallpal.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Navigate to the project directory:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+cd wallpal
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Install the dependencies:
 
-## Learn More
+```bash
+pnpm install
+```
 
-To learn more about Next.js, take a look at the following resources:
+4. Create a `.env` file from the example:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+cp .env.example .env
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Get your API keys from NeonDB and Upstash Redis and add them to the .env file.
 
-## Deploy on Vercel
+5. Set up your database:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+pnpm db:generate
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+6. Start the development server:
+
+```bash
+pnpm dev
+```
+
+7. Open your browser and visit http://localhost:3000 to access the app.
+
+## Contributing 🤝
+
+We welcome contributions! If you'd like to help improve Wallpal, please follow these steps:
+
+1. Fork the repository.
+2. Create a new branch for your feature or bug fix.
+3. Make your changes and commit them with descriptive messages.
+4. Push your changes to your fork.
+5. Submit a pull request to the main repository.
+
+## License 📄
+
+Wallpal is released under the [MIT License](LICENSE).
+
+## Support 🆘
+
+If you encounter any issues or have questions, please file an issue on our [GitHub issue tracker](https://github.com/devrabbani/wallpal/issues).
+
+---
+
+Wallpal - Unleash your creativity with stunning wallpapers! 🎨📱
