@@ -22,8 +22,8 @@ export default function GaleryImg({ wallpaper }: { wallpaper: WallpaperDB }) {
         <Image
           src={generateWallpaperPreview(wallpaper)}
           alt="Wallpaper"
-          layout="fill"
-          objectFit="cover"
+          fill
+          className="object-cover"
         />
       </div>
 

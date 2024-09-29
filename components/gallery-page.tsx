@@ -1,15 +1,13 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import type { WallpaperDB } from "@/lib/types";
 import { useInView } from "react-intersection-observer";
 import { getWallpapers } from "@/lib/actions";
 import { toast } from "sonner";
 import { LoaderCircle } from "lucide-react";
-import dynamic from "next/dynamic";
-import { GalleryImgSkeleton } from "@/app/gallery/loading";
-const GaleryImg = dynamic(() => import("./gallery-img"), { ssr: false });
+import GaleryImg from "./gallery-img";
 
 export default function Gallery({
   initialWallpapers,
@@ -27,10 +25,10 @@ export default function Gallery({
   );
   const [hasMore, setHasMore] = useState(initialHasMore);
   const [isLoading, setIsLoading] = useState(false);
-  const [isInitial, setIsInitial] = useState(true);
+  const [isMounted, setIsMounted] = useState(false);
 
   const fetchMore = async () => {
-    if (!isLoading || !hasMore) return; // extra safety
+    if (isLoading || !hasMore) return; // extra safety
 
     setIsLoading(true);
     try {
@@ -48,23 +46,22 @@ export default function Gallery({
     }
   };
 
-  const { ref, inView } = useInView({ threshold: 0.5 });
+  const { ref, inView } = useInView({ threshold: 0.4 });
 
   useEffect(() => {
-    if (isInitial) {
-      setIsInitial(false);
-      return;
-    }
-
     if (inView && !isLoading && hasMore) fetchMore();
-  }, [inView, isInitial]);
+  }, [inView]);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) return null;
 
   return (
     <>
       {wallpapers.map((wallpaper) => (
-        <Suspense key={wallpaper.id} fallback={<GalleryImgSkeleton />}>
-          <GaleryImg key={wallpaper.id} wallpaper={wallpaper} />
-        </Suspense>
+        <GaleryImg key={wallpaper.id} wallpaper={wallpaper} />
       ))}
       {hasMore ? (
         <Button
