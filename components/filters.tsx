@@ -147,7 +147,9 @@ export default function Filters({ config, updateConfig }: FiltersProps) {
                 { value: "pastel", label: "Pastel" },
                 { value: "vibrant", label: "Vibrant" },
                 { value: "dark", label: "Dark" },
-                { value: "light", label: "Light" },
+                { value: "cool", label: "Cool" },
+                { value: "warm", label: "Warm" },
+                { value: "grayscale", label: "Grayscale" },
               ]}
             />
             {config.palette === "custom" && (
