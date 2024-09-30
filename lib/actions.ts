@@ -20,22 +20,19 @@ const getIp = () => {
   return "0.0.0.0";
 };
 
-const checkRateLimit = async () => {
-  const identifier = getIp();
-
-  const { success } = await ratelimit.limit(identifier);
-
-  if (!success) {
-    return {
-      error: "Too many requests!, Try after some time",
-    };
-  }
-};
 // Saving Wallpaper in DB
 
 export const saveWallpaper = async (config: WallpaperConfig) => {
   try {
-    await checkRateLimit();
+    const ip = getIp();
+
+    const { success } = await ratelimit.limit(ip);
+
+    if (!success) {
+      return {
+        error: "Too many requests!, Try after some time",
+      };
+    }
 
     const wallpaperHash = generateWallpaperHash(config);
     const { textPosition, ...otherConfig } = config;
@@ -51,7 +48,7 @@ export const saveWallpaper = async (config: WallpaperConfig) => {
       return {
         error: "Something went wrong",
       };
-    revalidateTag("wallpapers");
+    revalidateTag(`wallpapers-${ip}`);
     console.log("New Wallpaper Created", newWallpaper.id);
   } catch (error: any) {
     console.log(error?.message);
