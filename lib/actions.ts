@@ -71,6 +71,8 @@ export const getWallpapers = (
   const getCachedWallpapers = unstable_cache(
     async (cursor?: number | null, pageSize: number = 8) => {
       try {
+        console.log("cached IP", ip);
+
         const wallpapers = await prisma.wallpaper.findMany({
           take: pageSize + 1, // To check has more
           ...(cursor ? { cursor: { id: cursor as number }, skip: 1 } : {}),
@@ -108,12 +110,12 @@ export const getWallpapers = (
         };
       }
     },
-    ["cached_data"],
+    [`cached_data-${ip}`],
     {
       revalidate: 60 * 60 * 2,
       tags: [`wallpapers-${ip}`],
     }
   );
-
+  console.log("IP", ip);
   return getCachedWallpapers(cursor, pageSize);
 };
