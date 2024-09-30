@@ -20,22 +20,19 @@ const getIp = () => {
   return "0.0.0.0";
 };
 
-const checkRateLimit = async () => {
-  const identifier = getIp();
-
-  const { success } = await ratelimit.limit(identifier);
-
-  if (!success) {
-    return {
-      error: "Too many requests!, Try after some time",
-    };
-  }
-};
 // Saving Wallpaper in DB
 
 export const saveWallpaper = async (config: WallpaperConfig) => {
   try {
-    await checkRateLimit();
+    const ip = getIp();
+
+    const { success } = await ratelimit.limit(ip);
+
+    if (!success) {
+      return {
+        error: "Too many requests!, Try after some time",
+      };
+    }
 
     const wallpaperHash = generateWallpaperHash(config);
     const { textPosition, ...otherConfig } = config;
@@ -51,7 +48,7 @@ export const saveWallpaper = async (config: WallpaperConfig) => {
       return {
         error: "Something went wrong",
       };
-    revalidateTag("wallpapers");
+    revalidateTag(`wallpapers-${ip}`);
     console.log("New Wallpaper Created", newWallpaper.id);
   } catch (error: any) {
     console.log(error?.message);
@@ -65,50 +62,58 @@ export const saveWallpaper = async (config: WallpaperConfig) => {
 };
 
 // Get Wallpaper from DB
-export const getWallpapers = unstable_cache(
-  async (
-    cursor?: number | null,
-    pageSize: number = 8
-  ): Promise<WallpapersResponse> => {
-    try {
-      const wallpapers = await prisma.wallpaper.findMany({
-        take: pageSize + 1, // To check has more
-        ...(cursor ? { cursor: { id: cursor as number }, skip: 1 } : {}),
-        orderBy: { createdAt: "desc" },
-      });
+export const getWallpapers = (
+  cursor?: number | null,
+  pageSize: number = 8
+): Promise<WallpapersResponse> => {
+  const ip = getIp();
 
-      const hasMore = wallpapers.length > pageSize;
-      const wallpapersPagesize = hasMore ? wallpapers.slice(0, -1) : wallpapers;
+  const getCachedWallpapers = unstable_cache(
+    async (cursor?: number | null, pageSize: number = 8) => {
+      try {
+        const wallpapers = await prisma.wallpaper.findMany({
+          take: pageSize + 1, // To check has more
+          ...(cursor ? { cursor: { id: cursor as number }, skip: 1 } : {}),
+          orderBy: { createdAt: "desc" },
+        });
 
-      const wallpapersPreview = wallpapersPagesize.map((wallpaper) => {
-        const { textPositionX, textPositionY, ...otherData } = wallpaper;
+        const hasMore = wallpapers.length > pageSize;
+        const wallpapersPagesize = hasMore
+          ? wallpapers.slice(0, -1)
+          : wallpapers;
+
+        const wallpapersPreview = wallpapersPagesize.map((wallpaper) => {
+          const { textPositionX, textPositionY, ...otherData } = wallpaper;
+          return {
+            ...otherData,
+            textPosition: {
+              x: textPositionX,
+              y: textPositionY,
+            },
+          };
+        });
+
+        const nextCursor = hasMore
+          ? wallpapersPagesize[wallpapersPagesize.length - 1].id
+          : null;
         return {
-          ...otherData,
-          textPosition: {
-            x: textPositionX,
-            y: textPositionY,
-          },
+          wallpapers: wallpapersPreview || [],
+          nextCursor: nextCursor,
+          hasMore,
         };
-      });
-
-      const nextCursor = hasMore
-        ? wallpapersPagesize[wallpapersPagesize.length - 1].id
-        : null;
-      return {
-        wallpapers: wallpapersPreview || [],
-        nextCursor: nextCursor,
-        hasMore,
-      };
-    } catch (error: any) {
-      console.log(error?.message);
-      return {
-        error: error?.message,
-      };
+      } catch (error: any) {
+        console.log(error?.message);
+        return {
+          error: error?.message,
+        };
+      }
+    },
+    ["cached_data"],
+    {
+      revalidate: 60 * 60 * 2,
+      tags: [`wallpapers-${ip}`],
     }
-  },
-  ["cached_data"],
-  {
-    revalidate: 60 * 60 * 2,
-    tags: ["wallpapers"],
-  }
-);
+  );
+
+  return getCachedWallpapers(cursor, pageSize);
+};
