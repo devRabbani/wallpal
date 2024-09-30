@@ -69,7 +69,7 @@ export const getWallpapers = (
   const ip = getIp();
 
   const getCachedWallpapers = unstable_cache(
-    async (cursor?: number | null, pageSize: number = 8) => {
+    async (cursor?: number | null, pageSize: number = 8, userIp?: string) => {
       try {
         console.log("cached IP", ip);
 
@@ -117,5 +117,5 @@ export const getWallpapers = (
     }
   );
   console.log("IP", ip);
-  return getCachedWallpapers(cursor, pageSize);
+  return getCachedWallpapers(cursor, pageSize, ip);
 };
