@@ -61,67 +61,15 @@ export const saveWallpaper = async (config: WallpaperConfig) => {
   }
 };
 
-// Get Wallpaper from DB
-// export const getWallpapers = unstable_cache(
-//   async (
-//     cursor?: number | null,
-//     pageSize: number = 8
-//   ): Promise<WallpapersResponse> => {
-//     try {
-//       const wallpapers = await prisma.wallpaper.findMany({
-//         take: pageSize + 1, // To check has more
-//         ...(cursor ? { cursor: { id: cursor as number }, skip: 1 } : {}),
-//         orderBy: { createdAt: "desc" },
-//       });
-
-//       const hasMore = wallpapers.length > pageSize;
-//       const wallpapersPagesize = hasMore ? wallpapers.slice(0, -1) : wallpapers;
-
-//       const wallpapersPreview = wallpapersPagesize.map((wallpaper) => {
-//         const { textPositionX, textPositionY, ...otherData } = wallpaper;
-//         return {
-//           ...otherData,
-//           textPosition: {
-//             x: textPositionX,
-//             y: textPositionY,
-//           },
-//         };
-//       });
-
-//       const nextCursor = hasMore
-//         ? wallpapersPagesize[wallpapersPagesize.length - 1].id
-//         : null;
-//       return {
-//         wallpapers: wallpapersPreview || [],
-//         nextCursor: nextCursor,
-//         hasMore,
-//       };
-//     } catch (error: any) {
-//       console.log(error?.message);
-//       return {
-//         error: error?.message,
-//       };
-//     }
-//   },
-//   ["cached_data"],
-//   {
-//     revalidate: 60 * 60 * 2,
-//     tags: ["wallpapers"],
-//   }
-// );
-
 export const getWallpapers = async (
   cursor?: number | null,
   pageSize: number = 8
 ): Promise<WallpapersResponse> => {
   const ip = getIp();
 
-  console.log("ip", ip);
-
   return unstable_cache(
     async () => {
       try {
-        console.log("cahced ip", ip);
         const wallpapers = await prisma.wallpaper.findMany({
           take: pageSize + 1, // To check has more
           ...(cursor ? { cursor: { id: cursor as number }, skip: 1 } : {}),
@@ -161,7 +109,7 @@ export const getWallpapers = async (
     },
     [`wallpapers-${ip}`],
     {
-      revalidate: 60 * 60 * 2,
+      revalidate: 60 * 60 * 2, // 2 hours
       tags: [`wallpapers-${ip}`],
     }
   )();
