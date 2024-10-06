@@ -67,7 +67,7 @@ export const getWallpapers = async (
 ): Promise<WallpapersResponse> => {
   const ip = getIp();
 
-  return unstable_cache(
+  return await unstable_cache(
     async () => {
       try {
         const wallpapers = await prisma.wallpaper.findMany({
